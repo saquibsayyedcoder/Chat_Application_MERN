@@ -1,23 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { useChatStore } from '../../store/useChatStore';
-import SidebarSkeleton from '../components/skeletons/SidebarSkeleton';
-import { Users } from 'lucide-react';
-import { useAuthStore } from '../../store/useAuthsStore';
+import { useEffect, useState } from "react";
+
+import {useChatStore} from "../../store/useChatStore";
+import { useAuthStore } from "../../store/useAuthsStore";
+import SidebarSkeleton from "../components/skeletons/SidebarSkeleton";
+
+import { Users } from "lucide-react";
 
 const Sidebar = () => {
   const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading } = useChatStore();
-  const { onlineUsers = [] } = useAuthStore(); // default to empty array if undefined
+
+  const { onlineUsers } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
   useEffect(() => {
-    getUsers(); // FIX: actually call getUsers
+    getUsers();
   }, [getUsers]);
 
   const filteredUsers = showOnlineOnly
     ? users.filter((user) => onlineUsers.includes(user._id))
     : users;
-
-  const onlineCount = Math.max((onlineUsers?.length || 1) - 1, 0); // avoid negative values
 
   if (isUsersLoading) return <SidebarSkeleton />;
 
@@ -28,8 +29,7 @@ const Sidebar = () => {
           <Users className="size-6" />
           <span className="font-medium hidden lg:block">Contacts</span>
         </div>
-
-        {/* Online filter toggle */}
+        {/* TODO: Online filter toggle */}
         <div className="mt-3 hidden lg:flex items-center gap-2">
           <label className="cursor-pointer flex items-center gap-2">
             <input
@@ -52,12 +52,12 @@ const Sidebar = () => {
             className={`
               w-full p-3 flex items-center gap-3
               hover:bg-base-300 transition-colors
-              ${selectedUser?._id === user._id ? 'bg-base-300 ring-1 ring-base-300' : ''}
+              ${selectedUser?._id === user._id ? "bg-base-300 ring-1 ring-base-300" : ""}
             `}
           >
             <div className="relative mx-auto lg:mx-0">
               <img
-                src={user.profilePic || '/boss.png'}
+                src={user.profilePic || "/avatar.png"}
                 alt={user.name}
                 className="size-12 object-cover rounded-full"
               />
@@ -73,7 +73,7 @@ const Sidebar = () => {
             <div className="hidden lg:block text-left min-w-0">
               <div className="font-medium truncate">{user.fullName}</div>
               <div className="text-sm text-zinc-400">
-                {onlineUsers.includes(user._id) ? 'Online' : 'Offline'}
+                {onlineUsers.includes(user._id) ? "Online" : "Offline"}
               </div>
             </div>
           </button>
@@ -86,5 +86,4 @@ const Sidebar = () => {
     </aside>
   );
 };
-
 export default Sidebar;
